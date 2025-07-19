@@ -1,6 +1,6 @@
 
 'use client';
-
+import { fetchProducts } from '@/lib/api';
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';

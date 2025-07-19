@@ -1,4 +1,5 @@
 import ProductDetail from './ProductDetail';
+import { fetchProductById } from '@/lib/api';
 
 export async function generateStaticParams() {
   return [
