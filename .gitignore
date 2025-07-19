@@ -1,0 +1,14 @@
+# Ignore node_modules from both frontend and backend
+tech-store-api/node_modules
+6version/node_modules
+
+# Ignore build files
+6version/.next
+tech-store-api/dist
+
+# Ignore environment files
+**/.env
+
+# System files
+.DS_Store
+npm-debug.log
