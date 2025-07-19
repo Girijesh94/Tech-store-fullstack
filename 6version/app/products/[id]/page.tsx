@@ -1,14 +1,21 @@
-import ProductDetail from './ProductDetail';
 import { fetchProductById } from '@/lib/api';
 
-export async function generateStaticParams() {
-  return [
-    { id: '1' }, { id: '2' }, { id: '3' }, { id: '4' },
-    { id: '5' }, { id: '6' }, { id: '7' }, { id: '8' },
-    { id: '9' }, { id: '10' }, { id: '11' }, { id: '12' }
-  ];
+interface PageProps {
+  params: { id: string };
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  return <ProductDetail productId={params.id} />;
+export async function generateStaticParams() {
+  return Array.from({ length: 12 }, (_, i) => ({ id: String(i + 1) }));
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const product = await fetchProductById(params.id);
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+      <p className="text-gray-700 mb-2">Price: ₹{product.price}</p>
+      <p className="text-gray-600">{product.description}</p>
+    </div>
+  );
 }
