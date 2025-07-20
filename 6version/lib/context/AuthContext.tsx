@@ -5,10 +5,13 @@ import axios from "axios";
 
 interface AuthContextType {
   user: { email: string } | null;
+  isAuthenticated: boolean;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateProfile: (email: string) => void;
+  updatePreferences: (prefs: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,8 +55,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("email");
   };
 
+  const updateProfile = (email: string) => {
+    setUser({ email });
+    localStorage.setItem("email", email);
+  };
+
+  const updatePreferences = (prefs: any) => {
+    console.log("Preferences updated:", prefs);
+    // Placeholder: Add backend sync or localStorage if needed
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        token,
+        login,
+        register,
+        logout,
+        updateProfile,
+        updatePreferences,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

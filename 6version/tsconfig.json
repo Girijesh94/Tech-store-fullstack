@@ -10,6 +10,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "types": ["node", "next"],
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
@@ -19,7 +20,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

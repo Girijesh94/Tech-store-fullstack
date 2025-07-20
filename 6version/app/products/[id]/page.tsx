@@ -1,21 +1,31 @@
+import { Suspense } from 'react';
+import ProductDetail from './ProductDetail';
 import { fetchProductById } from '@/lib/api';
+import type { Metadata } from 'next';
+import type { PageProps } from 'next'; // ✅ Important addition
 
-interface PageProps {
-  params: { id: string };
+// ✅ Correct type for `params` expected by Next.js App Router
+type Props = PageProps<{
+  id: string;
+}>;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const product = await fetchProductById(params.id);
+  return {
+    title: product?.name || 'Product Detail',
+    description: product?.description || 'Product info page',
+  };
 }
 
 export async function generateStaticParams() {
-  return Array.from({ length: 12 }, (_, i) => ({ id: String(i + 1) }));
+  const ids = Array.from({ length: 12 }, (_, i) => ({ id: `${i + 1}` }));
+  return ids;
 }
 
-export default async function ProductPage({ params }: PageProps) {
-  const product = await fetchProductById(params.id);
-
+export default function ProductPage({ params }: Props) {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-      <p className="text-gray-700 mb-2">Price: ₹{product.price}</p>
-      <p className="text-gray-600">{product.description}</p>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductDetail productId={params.id} />
+    </Suspense>
   );
 }
