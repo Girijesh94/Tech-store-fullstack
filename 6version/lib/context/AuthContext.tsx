@@ -3,29 +3,35 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
+interface UserType {
+  email: string;
+  name?: string;
+  preferences?: { [key: string]: boolean };
+}
+
 interface AuthContextType {
-  user: { email: string } | null;
+  user: UserType | null;
   isAuthenticated: boolean;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  updateProfile: (email: string) => void;
-  updatePreferences: (prefs: any) => void;
+  updateProfile: (data: { name: string; email: string }) => Promise<void>;
+  updatePreferences: (prefs: { [key: string]: boolean }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedEmail = localStorage.getItem("email");
     if (storedToken && storedEmail) {
       setToken(storedToken);
-      setUser({ email: storedEmail });
+      setUser({ email: storedEmail, name: "User", preferences: {} });
     }
   }, []);
 
@@ -36,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
     const receivedToken = res.data.token;
     setToken(receivedToken);
-    setUser({ email });
+    setUser({ email, name: "User", preferences: {} });
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("email", email);
   };
@@ -55,14 +61,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("email");
   };
 
-  const updateProfile = (email: string) => {
-    setUser({ email });
-    localStorage.setItem("email", email);
+  const updateProfile = async (data: { name: string; email: string }) => {
+    setUser((prev) => prev ? { ...prev, ...data } : null);
+    // Optional: send to backend
   };
 
-  const updatePreferences = (prefs: any) => {
-    console.log("Preferences updated:", prefs);
-    // Placeholder: Add backend sync or localStorage if needed
+  const updatePreferences = async (prefs: { [key: string]: boolean }) => {
+    setUser((prev) => prev ? { ...prev, preferences: { ...prev.preferences, ...prefs } } : null);
+    // Optional: send to backend
   };
 
   return (
